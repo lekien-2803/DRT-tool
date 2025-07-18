@@ -111,7 +111,7 @@
   let currentNoMatchConfig = defaultNoMatchConfig;
   let currentClassName = "Default";
 
-  // Cấu hình style cải tiến: tách theo nhóm (groups)
+  // Cấu hình style cải tiến: tách theo nhóm (groups) - giống code 1
   const styleSettings = {
     container: {
       backgroundColor: '#f4f4f5',
@@ -119,7 +119,7 @@
       fontFamily: 'Lexend, sans-serif',
       boxShadow: '0 0 10px rgba(255,255,255,0.2)',
       padding: '10px',
-      maxWidth: '320px',
+      maxWidth: '300px', // Giống code 1
       maxHeight: '80vh',
       overflowY: 'auto',
       color: '#333',
@@ -296,7 +296,7 @@
   const controlRow = document.createElement('div');
   controlRow.style.display = 'flex';
   controlRow.style.justifyContent = 'space-between';
-  controlRow.style.gap = '6px';
+  controlRow.style.gap = '8px'; // Giống code 1
   controlRow.style.marginBottom = '10px';
   div.appendChild(controlRow);
 
@@ -305,7 +305,6 @@
   resetBtn.title = "Reset số kick";
   Object.assign(resetBtn.style, styleSettings.buttonBase);
   resetBtn.style.flex = '1';
-  resetBtn.style.fontSize = '12px';
   controlRow.appendChild(resetBtn);
 
   const minusBtn = document.createElement('button');
@@ -313,7 +312,6 @@
   Object.assign(minusBtn.style, styleSettings.buttonBase);
   minusBtn.style.backgroundColor = '#eee';
   minusBtn.style.flex = '1';
-  minusBtn.style.fontSize = '12px';
   controlRow.appendChild(minusBtn);
 
   const plusBtn = document.createElement('button');
@@ -321,24 +319,15 @@
   Object.assign(plusBtn.style, styleSettings.buttonBase);
   plusBtn.style.backgroundColor = '#eee';
   plusBtn.style.flex = '1';
-  plusBtn.style.fontSize = '12px';
   controlRow.appendChild(plusBtn);
 
-  const refreshBtn = document.createElement('button');
-  refreshBtn.innerText = '🔄';
-  Object.assign(refreshBtn.style, styleSettings.buttonBase);
-  refreshBtn.style.flex = '1';
-  refreshBtn.style.fontSize = '12px';
-  refreshBtn.title = "Làm mới số kick";
-  controlRow.appendChild(refreshBtn);
-
-  // Thêm nút Import JSON
+  // Thay nút refresh bằng nút import JSON
   const importBtn = document.createElement('button');
-  importBtn.innerText = '📁 Import JSON';
+  importBtn.innerText = '📁';
   importBtn.title = "Import JSON config cho No Match";
   Object.assign(importBtn.style, styleSettings.buttonBase, styleSettings.labelStyleGroups.importBtn);
-  importBtn.style.marginBottom = '10px';
-  div.appendChild(importBtn);
+  importBtn.style.flex = '1';
+  controlRow.appendChild(importBtn);
 
   // Tạo input file ẩn
   const fileInput = document.createElement('input');
@@ -372,13 +361,11 @@
             renderButtons();
             
             console.log(`✅ Đã import thành công config cho class: ${currentClassName}`);
-            alert(`✅ Đã import thành công config cho class: ${currentClassName}`);
           } else {
-            alert('❌ File JSON không đúng cấu trúc. Cần có "className" và "noMatchConfig"');
+            console.error('❌ File JSON không đúng cấu trúc. Cần có "className" và "noMatchConfig"');
           }
         } catch (error) {
-          console.error('Lỗi khi parse JSON:', error);
-          alert('❌ Lỗi khi đọc file JSON. Vui lòng kiểm tra cấu trúc file.');
+          console.error('❌ Lỗi khi parse JSON:', error);
         }
       };
       reader.readAsText(file);
@@ -413,7 +400,6 @@
   };
   minusBtn.onclick = decreaseCount;
   plusBtn.onclick = increaseCount;
-  refreshBtn.onclick = () => updateCounter(getCount());
   
   setInterval(() => {
     updateCounter(getCount());
