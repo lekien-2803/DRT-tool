@@ -2,7 +2,7 @@
         {
           "label": "Diff Design",
           "value": "Different products/different product type",
-          sub: [
+          "sub": [
             "Different Design", "Different Product",  
             "Different Headboard Design",
             "Different Footboard Design",
