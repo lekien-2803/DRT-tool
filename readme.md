@@ -20,31 +20,36 @@
     },
     {
       label: "Vary DSQ",
-      value: "Products vary by DSQ/number of pieces included but cannot join on DSQ/number of pieces included per MCJS",
+      value: "Products vary by DSQ/number of pieces included but cannot join on DSQ/number of pieces included",
       sub: [
         "Different number of pieces included", "Different Set", "Different DSQ"
       ]
     },
     {
       label: "Vary Material",
-      value: "Products vary by material but cannot join by material per MCJS",
+      value: "Products vary by material but cannot join by material",
       sub: ["Different Material"]
     },
     {
       label: "Vary Size/Cap",
-      value: "Products vary by size/capacity but cannot join by size/capacity per MCJS",
+      value: "Products vary by size/capacity but cannot join by size/capacity",
       sub: [
         "Different Size", "Different Capacity"
       ]
     },
     {
-      label: "Vary Pattern/Print",
-      value: "Products vary by pattern/print but cannot join by pattern/print per MCJS",
-      sub: ["Different Pattern", "Different Print"]
+      label: "Vary Pattern",
+      value: "Products vary by pattern but cannot join by pattern",
+      sub: ["Different Pattern"]
+    },
+    {
+      label: "Vary Graphic",
+      value: "Products vary by graphic/subject but cannot join on graphic/subject",
+      sub: ["Different Graphic", "Different Subject"]
     },
     {
       label: "Vary Color",
-      value: "Products vary by color/finish but cannot join by color/finish per MCJS",
+      value: "Products vary by color/finish but cannot join by color/finish",
       sub: ["Different Color", "Different Finish"]
     },
     {
@@ -54,23 +59,25 @@
     },
     {
       label: "Kit/Composite",
-      value: "SKU is Kit or Composite",
+      value: "SKU is a Kit/Composite",
       sub: ["Sku is a Child SKU", "Sku is a Composite SKU"]
     },
     {
-      label: "One-of-a-kind",
-      value: "Products vary but option grouping is not allowed for the class"
+      label: "Customize Option",
+      value: "SKU has a Customize Option",
+      sub: ["SKU has an Option with the value Customize: Yes", 
+            "Both SKUs have an Option with the value Customize: Yes"]
     },
     {
       label: "Other",
-      value: "Products vary by other categories which are not allowed grouping per MCJS",
+      value: "Products vary by other categories which are not allowed grouping",
       sub: [
         "Different MOQ, MMOQ", "Different Brand Catalog (US/UK)"
       ]
     },
     {
       label: "More than",
-      value: "Products vary by more than one category that does not allow grouping per MCJS",
+      value: "Products vary by more than one category that does not allow grouping",
       sub: [
         "Different Pattern", "Different Border",
         "Different Print",
@@ -181,7 +188,9 @@
       "Vary DSQ": 'alt',
       "Vary Material": 'alt',
       "Vary Size/Cap": 'alt',
-      "Vary Pattern/Print": 'alt',
+      "Vary Pattern": 'alt',
+      "Vary Graphic": 'alt',
+      "Customize Option": 'alt',
       "Vary Color": 'alt',
       "Not Enough": 'alt',
       "Kit/Composite": 'alt',
