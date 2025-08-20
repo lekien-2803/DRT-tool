@@ -65,8 +65,8 @@
     {
       label: "Customize Option",
       value: "SKU has a Customize Option",
-      sub: ["SKU has an Option with the value Customize: Yes", 
-            "Both SKUs have an Option with the value Customize: Yes"]
+      sub: ["SKU A/B has a Customize Option", 
+            "Both SKUs have a Customize Option"]
     },
     {
       label: "Other",
