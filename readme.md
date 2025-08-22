@@ -121,7 +121,10 @@
         label: "Bad Imagery",
         type: "special",
         action: "bad_imagery",
-        value: "SKU A has options that contain images representing different options"
+        children: [
+          { label: "SKU Bad Imagery", value: "SKU A has options that contain images representing different options" },
+          { label: "Both SKUs Bad Imagery", value: "Both SKUs have options that contain images representing different options" },
+        ]
       },
       {
         label: "Joined Incorrectly",
