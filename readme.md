@@ -65,8 +65,12 @@
     {
       label: "Customize Option",
       value: "SKU has a Customize Option",
-      sub: ["SKU A/B has a Customize Option", 
-            "Both SKUs have a Customize Option"]
+      sub: ["SKU has an Option with the value Customize: Yes", 
+            "Both SKUs have an Option with the value Customize: Yes"]
+    },
+    {
+      label: "One-of-a-kind",
+      value: "Products vary but option grouping is not allowed for the class"
     },
     {
       label: "Other",
@@ -111,6 +115,24 @@
         type: "parent",
         action: "no",
         children: noMatchConfig
+      },
+      // Thêm các nút mới
+      {
+        label: "Bad Imagery",
+        type: "special",
+        action: "bad_imagery",
+        value: "SKU A has options that contain images representing different options"
+      },
+      {
+        label: "Joined Incorrectly",
+        type: "parent",
+        action: "joined_incorrectly",
+        children: [
+          { label: "SKU Incorrect Design", value: "SKU A is joined incorrectly by design" },
+          { label: "Both SKUs Incorrect Design", value: "Both SKUs are joined incorrectly by design" },
+          { label: "SKU Incorrect Option", value: "SKU A is incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" },
+          { label: "Both SKUs Incorrect Option", value: "Both SKUs are incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" }
+        ]
       }
     ];
   }
@@ -173,7 +195,10 @@
       alt21: { background: '#ffc8aa', color: '#ff5a00' },
       selected: { background: '#4CAF50', color: '#fff' },
       multiSelectControl: { background: '#2196F3', color: '#fff' },
-      importBtn: { background: '#9C27B0', color: '#fff' } // Style cho nút import
+      importBtn: { background: '#9C27B0', color: '#fff' },
+      // Thêm style cho các nút mới
+      badImagery: { background: '#ff6b35', color: '#fff' },
+      joinedIncorrectly: { background: '#8b5cf6', color: '#fff' }
     },
     // Ánh xạ nhãn sang nhóm style
     labelStyleMap: {
@@ -196,7 +221,14 @@
       "Kit/Composite": 'alt',
       "One-of-a-kind": 'alt',
       Other: 'alt',
-      "More than": 'alt'
+      "More than": 'alt',
+      // Thêm mapping cho các nút mới
+      "Bad Imagery": 'badImagery',
+      "Joined Incorrectly": 'joinedIncorrectly',
+      "SKU A Design": 'alt',
+      "Both SKUs Design": 'alt',
+      "SKU A Option": 'alt',
+      "Both SKUs Option": 'alt'
     }
   };
 
@@ -204,6 +236,27 @@
   function getLabelStyle(label) {
     const group = styleSettings.labelStyleMap[label];
     return group ? styleSettings.labelStyleGroups[group] : styleSettings.labelStyleGroups.base;
+  }
+
+  // Hàm tick checkbox và điền input
+  function tickCheckboxAndFillInput(value) {
+    // Tìm và tick checkbox
+    const checkbox = document.querySelector('input[type="checkbox"]');
+    if (checkbox && !checkbox.checked) {
+      checkbox.click(); // Click để trigger event
+    }
+    
+    // Đợi một chút để input xuất hiện
+    setTimeout(() => {
+      const input = document.querySelector('input[placeholder="Which data is wrong for those SKUs?"]');
+      if (input) {
+        // Set value cho input
+        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+        setter.call(input, value);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }, 100);
   }
 
   // Tạo container chính
@@ -306,7 +359,7 @@
   const controlRow = document.createElement('div');
   controlRow.style.display = 'flex';
   controlRow.style.justifyContent = 'space-between';
-  controlRow.style.gap = '8px'; // Giống code 1
+  controlRow.style.gap = '8px'; 
   controlRow.style.marginBottom = '10px';
   div.appendChild(controlRow);
 
@@ -470,8 +523,16 @@
           Object.assign(subWrapper.style, styleSettings.subWrapper);
           childWrapper.appendChild(subWrapper);
 
-          // Nếu có sub, tạo thêm nút
-          if (child.sub) {
+          // Xử lý click cho nút con
+          if (item.action === "joined_incorrectly") {
+            // Xử lý đặc biệt cho "Joined Incorrectly"
+            childBtn.onclick = () => {
+              tickCheckboxAndFillInput(child.value);
+              childWrapper.style.display = "none";
+              window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            };
+          } else if (child.sub) {
+            // Logic cũ cho các nút có sub
             let selectedItems = [];
 
             childBtn.onclick = () => {
@@ -594,6 +655,16 @@
           childWrapper.style.display = childWrapper.style.display === "none" ? "block" : "none";
         };
 
+      } else if (item.type === "special") {
+        // Xử lý cho nút "Bad Imagery"
+        const btn = document.createElement("button");
+        btn.textContent = item.label;
+        Object.assign(btn.style, styleSettings.buttonBase, getLabelStyle(item.label));
+        btn.onclick = () => {
+          tickCheckboxAndFillInput(item.value);
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        };
+        buttonsContainer.appendChild(btn);
       } else {
         const btn = document.createElement("button");
         btn.textContent = item.label;
@@ -640,6 +711,6 @@
   // Render ban đầu
   renderButtons();
 
-  console.log("🚀 Giao diện đã khởi chạy với chức năng import JSON!");
+  console.log("🚀 Giao diện đã khởi chạy với chức năng Bad Imagery và Joined Incorrectly!");
 })();
 ```
