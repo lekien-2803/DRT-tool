@@ -116,14 +116,14 @@
         action: "no",
         children: noMatchConfig
       },
-      // Thêm các nút mới
+      // Sửa đổi Bad Imagery thành parent với children
       {
         label: "Bad Imagery",
-        type: "special",
+        type: "parent",
         action: "bad_imagery",
         children: [
           { label: "SKU Bad Imagery", value: "SKU A has options that contain images representing different options" },
-          { label: "Both SKUs Bad Imagery", value: "Both SKUs have options that contain images representing different options" },
+          { label: "Both SKUs Bad Imagery", value: "Both SKUs have options that contain images representing different options" }
         ]
       },
       {
@@ -131,10 +131,10 @@
         type: "parent",
         action: "joined_incorrectly",
         children: [
-          { label: "SKU Incorrect Design", value: "SKU A is joined incorrectly by design" },
-          { label: "Both SKUs Incorrect Design", value: "Both SKUs are joined incorrectly by design" },
-          { label: "SKU Incorrect Option", value: "SKU A is incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" },
-          { label: "Both SKUs Incorrect Option", value: "Both SKUs are incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" }
+          { label: "SKU A Design", value: "SKU A is joined incorrectly by design" },
+          { label: "Both SKUs Design", value: "Both SKUs are joined incorrectly by design" },
+          { label: "SKU A Option", value: "SKU A is incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" },
+          { label: "Both SKUs Option", value: "Both SKUs are incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" }
         ]
       }
     ];
@@ -227,6 +227,8 @@
       "More than": 'alt',
       // Thêm mapping cho các nút mới
       "Bad Imagery": 'badImagery',
+      "SKU Bad Imagery": 'alt',
+      "Both SKUs Bad Imagery": 'alt',
       "Joined Incorrectly": 'joinedIncorrectly',
       "SKU A Design": 'alt',
       "Both SKUs Design": 'alt',
@@ -362,7 +364,7 @@
   const controlRow = document.createElement('div');
   controlRow.style.display = 'flex';
   controlRow.style.justifyContent = 'space-between';
-  controlRow.style.gap = '8px'; 
+  controlRow.style.gap = '8px'; // Giống code 1
   controlRow.style.marginBottom = '10px';
   div.appendChild(controlRow);
 
@@ -527,8 +529,8 @@
           childWrapper.appendChild(subWrapper);
 
           // Xử lý click cho nút con
-          if (item.action === "joined_incorrectly") {
-            // Xử lý đặc biệt cho "Joined Incorrectly"
+          if (item.action === "bad_imagery" || item.action === "joined_incorrectly") {
+            // Xử lý đặc biệt cho "Bad Imagery" và "Joined Incorrectly"
             childBtn.onclick = () => {
               tickCheckboxAndFillInput(child.value);
               childWrapper.style.display = "none";
@@ -658,16 +660,6 @@
           childWrapper.style.display = childWrapper.style.display === "none" ? "block" : "none";
         };
 
-      } else if (item.type === "special") {
-        // Xử lý cho nút "Bad Imagery"
-        const btn = document.createElement("button");
-        btn.textContent = item.label;
-        Object.assign(btn.style, styleSettings.buttonBase, getLabelStyle(item.label));
-        btn.onclick = () => {
-          tickCheckboxAndFillInput(item.value);
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        };
-        buttonsContainer.appendChild(btn);
       } else {
         const btn = document.createElement("button");
         btn.textContent = item.label;
@@ -714,6 +706,6 @@
   // Render ban đầu
   renderButtons();
 
-  console.log("🚀 Giao diện đã khởi chạy với chức năng Bad Imagery và Joined Incorrectly!");
+  console.log("🚀 Giao diện đã khởi chạy");
 })();
 ```
