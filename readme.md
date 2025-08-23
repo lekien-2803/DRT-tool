@@ -84,12 +84,11 @@
       value: "Products vary by more than one category that does not allow grouping",
       sub: [
         "Different Pattern", "Different Border",
-        "Different Print",
+        "Different Graphic",
         "Different Color", "Different Finish",
         "Different Size", "Different Capacity",
         "Different Material",
         "Different Set", "Different number of pieces included", "Different DSQ",
-        "Different Faucet included", "Different Countertop material"
       ],
       allowMulti: true
     }
