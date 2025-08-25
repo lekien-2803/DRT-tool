@@ -88,7 +88,7 @@
         "Different Color", "Different Finish",
         "Different Size", "Different Capacity",
         "Different Material",
-        "Different Set", "Different number of pieces included", "Different DSQ",
+        "Different Set", "Different number of pieces included", "Different DSQ"
       ],
       allowMulti: true
     }
