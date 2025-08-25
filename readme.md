@@ -121,8 +121,15 @@
         type: "parent",
         action: "bad_imagery",
         children: [
-          { label: "SKU Bad Imagery", value: "SKU A has options that contain images representing different options" },
-          { label: "Both SKUs Bad Imagery", value: "Both SKUs have options that contain images representing different options" }
+          { 
+            label: "SKU Bad Imagery", 
+            value: "SKU {sku} has options that contain images representing different options",
+            needsSKUInput: true 
+          },
+          { 
+            label: "Both SKUs Bad Imagery", 
+            value: "Both SKUs have options that contain images representing different options" 
+          }
         ]
       },
       {
@@ -130,10 +137,24 @@
         type: "parent",
         action: "joined_incorrectly",
         children: [
-          { label: "SKU A Design", value: "SKU A is joined incorrectly by design" },
-          { label: "Both SKUs Design", value: "Both SKUs are joined incorrectly by design" },
-          { label: "SKU A Option", value: "SKU A is incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" },
-          { label: "Both SKUs Option", value: "Both SKUs are incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" }
+          { 
+            label: "SKU A Design", 
+            value: "SKU {sku} is joined incorrectly by design",
+            needsSKUInput: true 
+          },
+          { 
+            label: "Both SKUs Design", 
+            value: "Both SKUs are joined incorrectly by design" 
+          },
+          { 
+            label: "SKU A Option", 
+            value: "SKU {sku} is incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)",
+            needsSKUInput: true 
+          },
+          { 
+            label: "Both SKUs Option", 
+            value: "Both SKUs are incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" 
+          }
         ]
       }
     ];
@@ -184,6 +205,26 @@
       borderRadius: '5px',
       padding: '5px',
       backgroundColor: '#fafafa'
+    },
+    inputField: {
+      width: '100%',
+      padding: '8px',
+      border: '1px solid #ccc',
+      borderRadius: '4px',
+      fontSize: '14px',
+      marginBottom: '8px',
+      boxSizing: 'border-box'
+    },
+    confirmButton: {
+      width: '100%',
+      padding: '8px',
+      backgroundColor: '#4CAF50',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      fontSize: '14px',
+      cursor: 'pointer',
+      marginBottom: '8px'
     },
     // Style theo nhóm để dễ thay đổi
     labelStyleGroups: {
@@ -261,6 +302,54 @@
         input.dispatchEvent(new Event('change', { bubbles: true }));
       }
     }, 100);
+  }
+
+  // Hàm tạo input field cho SKU
+  function createSKUInputField(child, childWrapper) {
+    const inputContainer = document.createElement('div');
+    inputContainer.style.marginTop = '8px';
+    inputContainer.style.marginBottom = '8px';
+    
+    const inputLabel = document.createElement('div');
+    inputLabel.textContent = 'Nhập SKU:';
+    inputLabel.style.fontSize = '12px';
+    inputLabel.style.color = '#666';
+    inputLabel.style.marginBottom = '4px';
+    inputContainer.appendChild(inputLabel);
+    
+    const inputField = document.createElement('input');
+    inputField.type = 'text';
+    inputField.placeholder = 'Nhập SKU tại đây...';
+    Object.assign(inputField.style, styleSettings.inputField);
+    inputContainer.appendChild(inputField);
+    
+    const confirmBtn = document.createElement('button');
+    confirmBtn.textContent = 'Confirm';
+    Object.assign(confirmBtn.style, styleSettings.confirmButton);
+    inputContainer.appendChild(confirmBtn);
+    
+    confirmBtn.onclick = () => {
+      const skuValue = inputField.value.trim();
+      if (skuValue) {
+        // Replace {sku} placeholder with actual SKU value
+        const finalValue = child.value.replace('{sku}', skuValue);
+        tickCheckboxAndFillInput(finalValue);
+        childWrapper.style.display = "none";
+        inputField.value = ''; // Reset input
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      } else {
+        alert('Please enter a SKU code');
+      }
+    };
+    
+    // Allow Enter key to confirm
+    inputField.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        confirmBtn.click();
+      }
+    });
+    
+    return inputContainer;
   }
 
   // Tạo container chính
@@ -531,9 +620,32 @@
           if (item.action === "bad_imagery" || item.action === "joined_incorrectly") {
             // Xử lý đặc biệt cho "Bad Imagery" và "Joined Incorrectly"
             childBtn.onclick = () => {
-              tickCheckboxAndFillInput(child.value);
-              childWrapper.style.display = "none";
-              window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+              if (child.needsSKUInput) {
+                // Toggle hiển thị input field cho SKU
+                if (subWrapper.style.display === "none") {
+                  subWrapper.innerHTML = ''; // Clear existing content
+                  const inputContainer = createSKUInputField(child, childWrapper);
+                  subWrapper.appendChild(inputContainer);
+                  subWrapper.style.display = "block";
+                  
+                  // Focus vào input field
+                  setTimeout(() => {
+                    const inputField = inputContainer.querySelector('input');
+                    if (inputField) {
+                      inputField.focus();
+                    }
+                  }, 100);
+                } else {
+                  // Thu gọn lại
+                  subWrapper.style.display = "none";
+                  subWrapper.innerHTML = ''; // Clear content khi đóng
+                }
+              } else {
+                // Xử lý bình thường cho các option không cần SKU input
+                tickCheckboxAndFillInput(child.value);
+                childWrapper.style.display = "none";
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+              }
             };
           } else if (child.sub) {
             // Logic cũ cho các nút có sub
