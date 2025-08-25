@@ -199,8 +199,8 @@
       multiSelectControl: { background: '#2196F3', color: '#fff' },
       importBtn: { background: '#9C27B0', color: '#fff' },
       // Thêm style cho các nút mới
-      badImagery: { background: '#ff6b35', color: '#fff' },
-      joinedIncorrectly: { background: '#8b5cf6', color: '#fff' }
+      badImagery: { background: '#a0a0a0', color: '#fff' },
+      joinedIncorrectly: { background: '#a0a0a0', color: '#fff' }
     },
     // Ánh xạ nhãn sang nhóm style
     labelStyleMap: {
