@@ -319,7 +319,7 @@
     
     const inputField = document.createElement('input');
     inputField.type = 'text';
-    inputField.placeholder = 'Nhập SKU tại đây...';
+    inputField.placeholder = 'Nhập SKU bad/inco tại đây...';
     Object.assign(inputField.style, styleSettings.inputField);
     inputContainer.appendChild(inputField);
     
