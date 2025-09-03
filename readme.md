@@ -326,7 +326,7 @@
       
       const skuField = document.createElement('input');
       skuField.type = 'text';
-      skuField.placeholder = 'Nhập SKU (vd: DTOF1133)';
+      skuField.placeholder = 'Nhập SKU:';
       skuField.className = 'sku-input';
       Object.assign(skuField.style, styleSettings.inputField);
       
