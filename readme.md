@@ -215,7 +215,10 @@
       borderRadius: '4px',
       fontSize: '14px',
       marginBottom: '8px',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      // Thêm các style để đảm bảo input hoạt động tốt
+      outline: 'none',
+      transition: 'border-color 0.3s ease'
     },
     confirmButton: {
       width: '100%',
@@ -306,7 +309,7 @@
     }, 100);
   }
 
-  // Hàm tạo input field cho SKU và Option
+  // Hàm tạo input field cho SKU và Option - SỬA ĐỔI CHÍNH Ở ĐÂY
   function createAdvancedInputField(child, childWrapper) {
     const inputContainer = document.createElement('div');
     inputContainer.style.marginTop = '8px';
@@ -326,6 +329,28 @@
       skuField.placeholder = 'Nhập SKU (vd: DTOF1133)';
       skuField.className = 'sku-input';
       Object.assign(skuField.style, styleSettings.inputField);
+      
+      // THÊM CÁC EVENT LISTENER ĐỂ ĐẢM BẢO INPUT HOẠT ĐỘNG ĐÚNG
+      skuField.addEventListener('focus', function(e) {
+        e.target.style.borderColor = '#4CAF50';
+        e.target.style.boxShadow = '0 0 5px rgba(76, 175, 80, 0.3)';
+      });
+      
+      skuField.addEventListener('blur', function(e) {
+        e.target.style.borderColor = '#ccc';
+        e.target.style.boxShadow = 'none';
+      });
+      
+      // Đảm bảo click hoạt động
+      skuField.addEventListener('mousedown', function(e) {
+        e.stopPropagation();
+      });
+      
+      skuField.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.focus();
+      });
+      
       inputContainer.appendChild(skuField);
     }
     
@@ -344,13 +369,39 @@
       optionField.placeholder = 'Nhập option category (vd: Color, Size, Material)';
       optionField.className = 'option-input';
       Object.assign(optionField.style, styleSettings.inputField);
+      
+      // THÊM CÁC EVENT LISTENER TƯƠNG TỰ CHO OPTION INPUT
+      optionField.addEventListener('focus', function(e) {
+        e.target.style.borderColor = '#4CAF50';
+        e.target.style.boxShadow = '0 0 5px rgba(76, 175, 80, 0.3)';
+      });
+      
+      optionField.addEventListener('blur', function(e) {
+        e.target.style.borderColor = '#ccc';
+        e.target.style.boxShadow = 'none';
+      });
+      
+      // Đảm bảo click hoạt động
+      optionField.addEventListener('mousedown', function(e) {
+        e.stopPropagation();
+      });
+      
+      optionField.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.focus();
+      });
+      
       inputContainer.appendChild(optionField);
     }
     
     const confirmBtn = document.createElement('button');
     confirmBtn.textContent = 'Confirm';
     Object.assign(confirmBtn.style, styleSettings.confirmButton);
-    inputContainer.appendChild(confirmBtn);
+    
+    // Thêm event listener cho nút confirm
+    confirmBtn.addEventListener('mousedown', function(e) {
+      e.stopPropagation();
+    });
     
     confirmBtn.onclick = () => {
       let finalValue = child.value;
@@ -398,6 +449,8 @@
       }
     };
     
+    inputContainer.appendChild(confirmBtn);
+    
     // Allow Enter key to confirm trên input cuối cùng
     const inputs = inputContainer.querySelectorAll('input');
     if (inputs.length > 0) {
@@ -406,6 +459,19 @@
         if (e.key === 'Enter') {
           confirmBtn.click();
         }
+      });
+      
+      // Thêm xử lý Tab để chuyển focus giữa các input
+      inputs.forEach((input, index) => {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab' && !e.shiftKey && index < inputs.length - 1) {
+            e.preventDefault();
+            inputs[index + 1].focus();
+          } else if (e.key === 'Tab' && e.shiftKey && index > 0) {
+            e.preventDefault();
+            inputs[index - 1].focus();
+          }
+        });
       });
     }
     
@@ -428,20 +494,25 @@
   div.style.cursor = "move";
   document.body.appendChild(div);
 
-  // Xử lý kéo thả
+  // Xử lý kéo thả - NGĂN EVENT PROPAGATION
   let isDragging = false, offsetX = 0, offsetY = 0;
   div.addEventListener("mousedown", function(e) {
-    isDragging = true;
-    offsetX = e.clientX - div.getBoundingClientRect().left;
-    offsetY = e.clientY - div.getBoundingClientRect().top;
-    e.preventDefault();
+    // Chỉ kéo thả khi click vào container, không phải các input
+    if (e.target === div || (!e.target.tagName.match(/INPUT|BUTTON/))) {
+      isDragging = true;
+      offsetX = e.clientX - div.getBoundingClientRect().left;
+      offsetY = e.clientY - div.getBoundingClientRect().top;
+      e.preventDefault();
+    }
   });
+  
   document.addEventListener("mousemove", function(e) {
     if (isDragging) {
       div.style.left = `${e.clientX - offsetX}px`;
       div.style.top = `${e.clientY - offsetY}px`;
     }
   });
+  
   document.addEventListener("mouseup", () => isDragging = false);
 
   // Hiển thị class hiện tại
@@ -882,6 +953,6 @@
   // Render ban đầu
   renderButtons();
 
-  console.log("🚀 Giao diện đã khởi chạy với tính năng Joined Incorrectly nâng cao");
+  console.log("🚀 Giao diện đã khởi chạy với tính năng input field được cải thiện - click chuột hoạt động bình thường");
 })();
 ```
