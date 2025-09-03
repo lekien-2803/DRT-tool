@@ -148,12 +148,14 @@
           },
           { 
             label: "SKU A Option", 
-            value: "SKU {sku} is incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)",
-            needsSKUInput: true 
+            value: "SKU {sku} is incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS ({option})",
+            needsSKUInput: true,
+            needsOptionInput: true 
           },
           { 
             label: "Both SKUs Option", 
-            value: "Both SKUs are incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS (Option Category)" 
+            value: "Both SKUs are incorrectly joined, violating the 'DO NOT JOIN BY' rule in MCJS ({option})",
+            needsOptionInput: true 
           }
         ]
       }
@@ -304,24 +306,46 @@
     }, 100);
   }
 
-  // Hàm tạo input field cho SKU
-  function createSKUInputField(child, childWrapper) {
+  // Hàm tạo input field cho SKU và Option
+  function createAdvancedInputField(child, childWrapper) {
     const inputContainer = document.createElement('div');
     inputContainer.style.marginTop = '8px';
     inputContainer.style.marginBottom = '8px';
     
-    const inputLabel = document.createElement('div');
-    inputLabel.textContent = 'Nhập SKU:';
-    inputLabel.style.fontSize = '12px';
-    inputLabel.style.color = '#666';
-    inputLabel.style.marginBottom = '4px';
-    inputContainer.appendChild(inputLabel);
+    // Container cho SKU input (nếu cần)
+    if (child.needsSKUInput) {
+      const skuLabel = document.createElement('div');
+      skuLabel.textContent = 'Nhập SKU:';
+      skuLabel.style.fontSize = '12px';
+      skuLabel.style.color = '#666';
+      skuLabel.style.marginBottom = '4px';
+      inputContainer.appendChild(skuLabel);
+      
+      const skuField = document.createElement('input');
+      skuField.type = 'text';
+      skuField.placeholder = 'Nhập SKU (vd: DTOF1133)';
+      skuField.className = 'sku-input';
+      Object.assign(skuField.style, styleSettings.inputField);
+      inputContainer.appendChild(skuField);
+    }
     
-    const inputField = document.createElement('input');
-    inputField.type = 'text';
-    inputField.placeholder = 'Nhập SKU bad/inco tại đây...';
-    Object.assign(inputField.style, styleSettings.inputField);
-    inputContainer.appendChild(inputField);
+    // Container cho Option input (nếu cần)
+    if (child.needsOptionInput) {
+      const optionLabel = document.createElement('div');
+      optionLabel.textContent = 'Nhập Option Category:';
+      optionLabel.style.fontSize = '12px';
+      optionLabel.style.color = '#666';
+      optionLabel.style.marginBottom = '4px';
+      optionLabel.style.marginTop = '8px';
+      inputContainer.appendChild(optionLabel);
+      
+      const optionField = document.createElement('input');
+      optionField.type = 'text';
+      optionField.placeholder = 'Nhập option category (vd: Color, Size, Material)';
+      optionField.className = 'option-input';
+      Object.assign(optionField.style, styleSettings.inputField);
+      inputContainer.appendChild(optionField);
+    }
     
     const confirmBtn = document.createElement('button');
     confirmBtn.textContent = 'Confirm';
@@ -329,27 +353,68 @@
     inputContainer.appendChild(confirmBtn);
     
     confirmBtn.onclick = () => {
-      const skuValue = inputField.value.trim();
-      if (skuValue) {
-        // Replace {sku} placeholder with actual SKU value
-        const finalValue = child.value.replace('{sku}', skuValue);
+      let finalValue = child.value;
+      let isValid = true;
+      
+      // Validate và thay thế SKU nếu cần
+      if (child.needsSKUInput) {
+        const skuInput = inputContainer.querySelector('.sku-input');
+        const skuValue = skuInput.value.trim();
+        if (!skuValue) {
+          alert('Please enter a SKU code');
+          skuInput.focus();
+          isValid = false;
+          return;
+        }
+        finalValue = finalValue.replace('{sku}', skuValue);
+      }
+      
+      // Validate và thay thế Option nếu cần
+      if (child.needsOptionInput) {
+        const optionInput = inputContainer.querySelector('.option-input');
+        const optionValue = optionInput.value.trim();
+        if (!optionValue) {
+          alert('Please enter an option category');
+          optionInput.focus();
+          isValid = false;
+          return;
+        }
+        finalValue = finalValue.replace('{option}', optionValue);
+      }
+      
+      if (isValid) {
         tickCheckboxAndFillInput(finalValue);
         childWrapper.style.display = "none";
-        inputField.value = ''; // Reset input
+        
+        // Reset inputs
+        if (child.needsSKUInput) {
+          inputContainer.querySelector('.sku-input').value = '';
+        }
+        if (child.needsOptionInput) {
+          inputContainer.querySelector('.option-input').value = '';
+        }
+        
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-      } else {
-        alert('Please enter a SKU code');
       }
     };
     
-    // Allow Enter key to confirm
-    inputField.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        confirmBtn.click();
-      }
-    });
+    // Allow Enter key to confirm trên input cuối cùng
+    const inputs = inputContainer.querySelectorAll('input');
+    if (inputs.length > 0) {
+      const lastInput = inputs[inputs.length - 1];
+      lastInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          confirmBtn.click();
+        }
+      });
+    }
     
     return inputContainer;
+  }
+
+  // Hàm tạo input field cho SKU (backward compatibility)
+  function createSKUInputField(child, childWrapper) {
+    return createAdvancedInputField(child, childWrapper);
   }
 
   // Tạo container chính
@@ -620,19 +685,19 @@
           if (item.action === "bad_imagery" || item.action === "joined_incorrectly") {
             // Xử lý đặc biệt cho "Bad Imagery" và "Joined Incorrectly"
             childBtn.onclick = () => {
-              if (child.needsSKUInput) {
-                // Toggle hiển thị input field cho SKU
+              if (child.needsSKUInput || child.needsOptionInput) {
+                // Toggle hiển thị input field cho SKU và/hoặc Option
                 if (subWrapper.style.display === "none") {
                   subWrapper.innerHTML = ''; // Clear existing content
-                  const inputContainer = createSKUInputField(child, childWrapper);
+                  const inputContainer = createAdvancedInputField(child, childWrapper);
                   subWrapper.appendChild(inputContainer);
                   subWrapper.style.display = "block";
                   
-                  // Focus vào input field
+                  // Focus vào input field đầu tiên
                   setTimeout(() => {
-                    const inputField = inputContainer.querySelector('input');
-                    if (inputField) {
-                      inputField.focus();
+                    const firstInput = inputContainer.querySelector('input');
+                    if (firstInput) {
+                      firstInput.focus();
                     }
                   }, 100);
                 } else {
@@ -641,7 +706,7 @@
                   subWrapper.innerHTML = ''; // Clear content khi đóng
                 }
               } else {
-                // Xử lý bình thường cho các option không cần SKU input
+                // Xử lý bình thường cho các option không cần input
                 tickCheckboxAndFillInput(child.value);
                 childWrapper.style.display = "none";
                 window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
@@ -817,6 +882,6 @@
   // Render ban đầu
   renderButtons();
 
-  console.log("🚀 Giao diện đã khởi chạy");
+  console.log("🚀 Giao diện đã khởi chạy với tính năng Joined Incorrectly nâng cao");
 })();
 ```
