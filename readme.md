@@ -76,7 +76,10 @@
       label: "Other",
       value: "Products vary by other categories which are not allowed grouping",
       sub: [
-        "Different MOQ, MMOQ", "Different Brand Catalog (US/UK)"
+        "Different Sport Team",
+        "Different Orientation",
+        "Different MOQ, MMOQ", 
+        "Different Brand Catalog (US/UK)"
       ]
     },
     {
@@ -326,7 +329,7 @@
       
       const skuField = document.createElement('input');
       skuField.type = 'text';
-      skuField.placeholder = 'Nhập SKU:';
+      skuField.placeholder = 'Nhập SKU (vd: DTOF1133)';
       skuField.className = 'sku-input';
       Object.assign(skuField.style, styleSettings.inputField);
       
