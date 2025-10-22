@@ -1186,8 +1186,13 @@
         ...styleSettings.buttonBase,
         backgroundColor: '#eee',
         flex: '1'
-      }, { innerText: '-1' });
-      minusBtn.onclick = () => this.stateManager.decreaseCount();
+      }, { 
+        innerText: '↩️',
+        title: '-2 kicks vào nếu cặp này đã bị review'
+      });
+      minusBtn.onclick = () => {
+        this.stateManager.updateCount(Math.max(0, this.stateManager.getState().count - 2));
+      };
 
       const plusBtn = Utils.createElement('button', {
         ...styleSettings.buttonBase,
