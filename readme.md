@@ -74,7 +74,7 @@
     },
     {
       label: "Other",
-      value: "Products vary by other categories which are not allowed grouping",
+      value: "Products vary by other categories which do not allow grouping",
       sub: [
         "Different Sport Team",
         "Different Orientation",
