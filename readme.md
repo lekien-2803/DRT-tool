@@ -319,8 +319,10 @@
     }
 
     updateCount(value) {
-      this.state.count = value;
-      Storage.set('punchCount', value);
+      // ✅ Validation tập trung: đảm bảo không âm và là số nguyên
+      const safeValue = Math.max(0, Math.floor(value));
+      this.state.count = safeValue;
+      Storage.set('punchCount', safeValue);
       this.notify();
     }
 
@@ -333,7 +335,7 @@
     decreaseCount() {
       // Đọc lại từ localStorage để đảm bảo giá trị mới nhất từ các tab khác
       const currentCount = Storage.get('punchCount', 0);
-      this.updateCount(Math.max(0, currentCount - 2));
+      this.updateCount(currentCount - 1);
     }
 
     resetCount() {
@@ -1215,18 +1217,22 @@
         backgroundColor: '#eee',
         flex: '1'
       }, { 
-        innerText: '↩️',
-        title: '-2 kicks vào nếu cặp này đã bị review'
-      });
+        innerText: '-1',
+        title: 'Giảm 1 kick'
+         });
       minusBtn.onclick = () => {
-        this.stateManager.updateCount(Math.max(0, this.stateManager.getState().count - 2));
+        const currentCount = Storage.get('punchCount', 0);
+        this.stateManager.updateCount(Math.max(0, currentCount - 1));
       };
 
       const plusBtn = Utils.createElement('button', {
         ...styleSettings.buttonBase,
         backgroundColor: '#eee',
         flex: '1'
-      }, { innerText: '+1' });
+      }, { 
+        innerText: '+1',
+        title: 'Tăng 1 kick'
+         });
       plusBtn.onclick = () => this.stateManager.increaseCount();
 
       const importBtn = Utils.createElement('button', {
