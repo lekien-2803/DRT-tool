@@ -538,9 +538,20 @@
         );
         
         buttons.forEach(btn => {
-          btn.addEventListener('click', () => {
-            this.stateManager.increaseCount();
-          }, { once: true });
+          // ✅ Kiểm tra parent div để phân biệt Submit và Filter
+          const parentDiv = btn.parentElement;
+          const isSubmitButton = parentDiv && 
+            (parentDiv.classList.contains('margin_top_large') || 
+             parentDiv.classList.contains('text_right') ||
+             btn.textContent.trim().toLowerCase() === 'submit');
+          
+          if (isSubmitButton) {
+            btn.addEventListener('click', () => {
+              this.stateManager.increaseCount();
+            }, { once: true });
+          }
+          
+          // Đánh dấu đã xử lý để không check lại
           btn.dataset.punchHooked = "true";
         });
       });
