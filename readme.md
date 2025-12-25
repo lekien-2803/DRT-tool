@@ -134,7 +134,8 @@
     {
       label: "Kit/Composite",
       value: "SKU is a Kit/Composite",
-      sub: ["Sku is a Child SKU", "Sku is a Composite SKU"]
+      sub: ["SKU is Kit or Composite: Sku A is a Component SKU",
+            "SKU is Kit or Composite: Sku A is a Composite SKU"]
     },
     {
       label: "Customize Option",
@@ -148,7 +149,7 @@
     },
     {
       label: "Other",
-      value: "Products vary by another categories which do not allow grouping",
+      value: "Products vary by another category which does not allow grouping",
       sub: [
         "Different Sport Team",
         "Different Orientation",
