@@ -134,8 +134,8 @@
     {
       label: "Kit/Composite",
       value: "SKU is a Kit/Composite",
-      sub: ["SKU is Kit or Composite: Sku A is a Component SKU",
-            "SKU is Kit or Composite: Sku A is a Composite SKU"]
+      sub: ["Sku A is a Component SKU",
+            "Sku A is a Composite SKU"]
     },
     {
       label: "Customize Option",
